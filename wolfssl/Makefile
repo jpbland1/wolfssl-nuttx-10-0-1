@@ -30,6 +30,7 @@ https://github.com/wolfSSL/wolfssl/archive/refs/tags/v5.5.4-stable.zip
 WOLFSSL_URL ?= "https://github.com/wolfSSL/wolfssl/archive/refs/tags"
 
 WOLFSSL_VERSION = $(patsubst "%",%,$(strip $(CONFIG_WOLFSSL_VERSION)))
+STM32_HAL_DIR = $(patsubst "%",%,$(strip $(CONFIG_STM32_HAL_DIR)))
 WOLFSSL_ZIP = v$(WOLFSSL_VERSION)-stable.zip
 
 WOLFSSL_UNPACKNAME = wolfssl
@@ -118,6 +119,23 @@ CSRCS += $(WOLFSSL_UNPACKNAME)/wolfcrypt/src/wolfmath.c
 
 CFLAGS += -DWOLFSSL_USER_SETTINGS
 
+ifeq ($(CONFIG_WOLFSSL_STM32_CRYPTO_HW),y)
+ifneq ($(STM32_HAL_DIR),"")
+CFLAGS += -I$(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Inc/ -I$(STM32_HAL_DIR)/Core/Inc -I$(STM32_HAL_DIR)/Drivers/CMSIS/Device/ST/STM32H7xx/Include -I$(STM32_HAL_DIR)/Drivers/CMSIS/Include -DWOLFSSL_STM32_CUBEMX -DWOLFSSL_CRYPT_HW_MUTEX -DSTM32H753xx -DWOLFSSL_STM32H7 -DHAL_CONSOLE_UART=huart3 -DSTM32_CRYPTO -DSTM32_HASH -DSTM32_RNG -UNO_STM32_HASH -UNO_STM32_CRYPTO
+CSRCS += $(STM32_HAL_DIR)/Core/Src/system_stm32h7xx.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rng.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cryp.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cryp_ex.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_hash.c
+CSRCS += $(STM32_HAL_DIR)/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_hash_ex.c
+CSRCS += $(WOLFSSL_UNPACKNAME)/wolfcrypt/src/port/st/stm32.c
+endif
+endif
 
 ifneq ($(CONFIG_WOLFCRYPT_APPS),)
 

@@ -15,6 +15,22 @@ config WOLFSSL_VERSION
 	string "wolfSSL Version"
 	default "5.5.4"
 
+config WOLFSSL_STM32_CRYPTO_HW
+  tristate "STM32 Hardware Acceleration"
+  default n
+  ---help---
+    Enable hardware acceleration for the STM32H7
+
+if WOLFSSL_STM32_CRYPTO_HW
+
+config STM32_HAL_DIR
+  string "STM32 HAL Code Directory"
+  default ""
+  ---help---
+    Absolute path to the directory that contains the STM32 HAL driver code
+
+endif
+
 menuconfig WOLFCRYPT_APPS
 	tristate "wolfCrypt applications"
 	default n
